@@ -392,7 +392,9 @@ with aba_indicadores:
         st.altair_chart(
             graficos.dispersao_soh_risco(
                 pontos.assign(no_recorte=(na_faixa & na_quimica).loc[pontos.index]),
-                alt.selection_interval(name="area", encodings=["x", "y"]),
+                # zoom=False: por padrão a roda do mouse redimensiona a área selecionada, o que prendia a
+                # rolagem da página sobre o gráfico e disparava um rerun a cada giro
+                alt.selection_interval(name="area", encodings=["x", "y"], zoom=False),
                 graficos.dominio_com_folga(df["state_of_health"]),
                 graficos.dominio_com_folga(df["thermal_runaway_risk"]),
             ),

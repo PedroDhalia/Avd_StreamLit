@@ -177,7 +177,7 @@ def dispersao_soh_risco(dados, selecao, dominio_soh, dominio_risco):
 
     return em_portugues(
         alt.Chart(dados)
-        .mark_circle(size=40, stroke="white", strokeWidth=0.6)
+        .mark_circle(size=40)
         .encode(
             x=alt.X(
                 "state_of_health:Q", title=ROTULOS["state_of_health"], scale=alt.Scale(domain=dominio_soh, nice=False)
@@ -204,7 +204,9 @@ def dispersao_soh_risco(dados, selecao, dominio_soh, dominio_risco):
             ],
         )
         .add_params(selecao)
-        .properties(height=380)
+        # Canvas em vez de SVG: milhares de pontos viram uma imagem só, e não milhares de nós na página,
+        # o que deixava a rolagem pesada
+        .properties(height=380, usermeta={"embedOptions": {"renderer": "canvas"}})
     )
 
 
