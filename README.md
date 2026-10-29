@@ -1,109 +1,109 @@
-# AVD-20262-pratica-streamlit
+# Saúde de baterias de veículos elétricos
 
-Repositório utilizado para aula prática relacionada a Streamlit na disciplina Análise e Visualização de Dados da Cesar School no período de 2026.2.
+App em Streamlit com dois dashboards construídos a partir da minha EDA do dataset
+[EV Battery Health Prediction](https://www.kaggle.com/datasets/srisyra02/ev-battery-health-prediction-dataset-20k)
+(Kaggle, 20.000 veículos elétricos, 70 atributos), feita na Aula 11 da disciplina Análise e Visualização
+de Dados (CESAR School, 2026.2). Atividade das Aulas 21, 22 e 23.
 
-Repositório-modelo das Aulas 21, 22 e 23: construção de dois dashboards em Streamlit a partir da EDA desenvolvida em sala. O deploy dos dashboards ocorrerá via Streamlit Community Cloud e serão os seguintes:
+**Link do app:** _(preencher após o deploy no Streamlit Community Cloud)_
 
-- Dashboard 1 = correlação + distribuição das variáveis quantitativas
-- Dashboard 2 = KPIs
+| Dashboard 1: correlação e distribuição | Dashboard 2: indicadores |
+|---|---|
+| ![Dashboard 1](docs/dashboard1.png) | ![Dashboard 2](docs/dashboard2.png) |
 
-## Setup
+## Os dashboards
 
-Requer **Python 3.11 a 3.15**. Confira a sua versão antes de começar:
+**Dashboard 1: correlação + distribuição** das 5 variáveis quantitativas da EDA: saúde da bateria (SoH),
+ciclos de carga, resistência interna, perda de capacidade e risco de thermal runaway.
 
-| Sistema | Verificar versão |
-| --- | --- |
-| macOS / Linux | `python3 --version` |
-| Windows | `py --version` |
+- Heatmap da correlação (Spearman por padrão, porque nenhuma variável passou no Shapiro-Wilk da EDA;
+  Pearson e Kendall também disponíveis), mostrando só o triângulo inferior.
+- O par mais correlacionado aparece em destaque, junto com a diferença para a amostra sem filtros.
+  Isso responde à pergunta da Aula 21: remover valores extremos muda a correlação?
+- Histogramas de cada variável com a mediana marcada, com opção de separar por status (Normal / Falha).
+- Widgets na sidebar: seletor de variáveis, método, remover outliers (regra do IQR da EDA), separar por
+  status e um slider de intervalo por variável.
 
-### 1. Criar e ativar o ambiente virtual
+**Dashboard 2: KPIs** para a gestão de manutenção de uma frota decidir quais veículos inspecionar primeiro.
 
-O nome do comando do Python muda por sistema (em muitas máquinas `python` nem existe). Use a linha do seu sistema:
+- 4 métricas (`st.metric`): veículos no recorte, taxa de falha, SoH mediano e risco térmico extremo,
+  cada uma comparada com a base completa.
+- 3 visuais em Altair com **seleção cruzada**: clicar numa barra (idade do veículo ou química da bateria)
+  ou arrastar uma área na dispersão SoH × risco térmico filtra os KPIs e os outros gráficos.
+- Justificativa de cada métrica em [entregas/justificativa-metricas.md](entregas/justificativa-metricas.md).
 
-| Sistema | Criar | Ativar |
-| --- | --- | --- |
-| macOS / Linux | `python3 -m venv .venv` | `source .venv/bin/activate` |
-| Windows (PowerShell) | `py -m venv .venv` | `.venv\Scripts\Activate.ps1` |
-| Windows (cmd) | `py -m venv .venv` | `.venv\Scripts\activate.bat` |
+O filtro de **tipo de uso** (frota ou particular) na sidebar vale para os dois dashboards.
 
-Se você tem várias versões instaladas, escolha uma compatível, por exemplo `python3.12 -m venv .venv` (macOS/Linux) ou `py -3.12 -m venv .venv` (Windows).
+## Principais achados
 
-Com o ambiente ativo, o terminal mostra `(.venv)` no início da linha. **A partir daqui os comandos são iguais em todos os sistemas**, porque dentro do venv `python` e `pip` sempre existem.
+- A taxa de falha da base é 6,9% e cresce com a idade do veículo: 1,3% abaixo de 4 anos e 15,8% com 9 anos
+  ou mais.
+- SoH baixo e risco térmico alto são sinais **independentes** (Spearman −0,05) que, juntos, concentram as
+  falhas: com SoH até 70% e risco acima de 50, a taxa de falha é de 84,6%; com SoH acima de 90% e risco até
+  15, nenhuma falha.
+- SoH, perda de capacidade e resistência interna medem a mesma degradação (correlações de −0,94 e −0,86).
+- Remover os outliers pela regra do IQR tira 1.504 veículos e derruba a taxa de falha de 6,9% para 4,8%.
+  Isso confirma a decisão da EDA de mantê-los: os valores extremos são justamente as baterias em falha.
+- Química da bateria, tipo de uso, tipo de veículo e terreno não mudam a taxa de falha (Qui² p > 0,4).
 
-### 2. Instalar, configurar a IA e rodar
+## Stack
+
+Python 3.12 · Streamlit 1.66 · Altair · pandas · SciPy (testes da EDA) · kagglehub · Jupyter (notebooks).
+
+Identidade visual em [.streamlit/config.toml](.streamlit/config.toml): roxo `#5e3e93` (Falha) e rosa
+`#d4789a` (Normal), a mesma convenção de cores da EDA, com tons ajustados para contraste e daltonismo.
+Fonte: Inter.
+
+## Como rodar localmente
+
+Requer Python 3.11 a 3.15.
 
 ```bash
+# Windows (PowerShell): py -m venv .venv ; .venv\Scripts\Activate.ps1
+python3 -m venv .venv
+source .venv/bin/activate
+
 python -m pip install -r requirements.txt
-
-# Skills de IA do Streamlit (ver seção "IA neste projeto")
-streamlit skills --yes
-
+streamlit skills --yes   # opcional: skills de IA do Streamlit
 streamlit run app.py
 ```
 
-### Problemas comuns
+Para regenerar os dados, rode `notebooks/eda-com-downloads.ipynb` do início ao fim: ele baixa o dataset do
+Kaggle com o `kagglehub` (versão 1, fixada para a análise ser reprodutível) e salva `data/raw/dataset.csv`
+(bruto, fora do Git) e `data/clean/dataset.csv` (tratado, lido pelo app).
 
-- **`python: command not found` / `python` não é reconhecido:** use `python3` (macOS/Linux) ou `py` (Windows) só para criar o venv; depois de ativado, `python` funciona.
-- **Linux (Debian/Ubuntu): `ensurepip is not available` ou `No module named venv`:** instale `sudo apt install python3-venv` (ou `python3.X-venv` para a sua versão).
-- **Windows: "a execução de scripts foi desabilitada" ao ativar no PowerShell:** rode uma vez `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, ou use o cmd.
-- **Python fora de 3.11–3.15:** instale uma versão compatível em [python.org](https://www.python.org/downloads/) e crie o venv com ela, como no exemplo acima.
-- **Apareceu `ModuleNotFoundError` ou `streamlit: command not found`:** o venv provavelmente não está ativo. Ative de novo e confira o `(.venv)` no prompt.
-- **Erro de certificado no `pip install` (macOS, Python do python.org):** rode `Install Certificates.command`, na pasta Python 3.X em Aplicativos.
-- **`DatasetNotFoundError` ao baixar o dataset no notebook (macOS, Python do python.org):** é o mesmo problema de certificado SSL (o `pandas` não consegue ler o CSV da UCI). Rode `Install Certificates.command` e reinicie o kernel. O notebook `eda-com-downloads.ipynb` já define `SSL_CERT_FILE` com o `certifi` como contorno.
+## Estrutura
 
-## Estrutura de dados: `data/raw` vs `data/clean`
-
-- `data/raw/`: o dataset **bruto**, como foi baixado. Nunca é editado à mão.
-- `data/clean/`: o dataset **já tratado**, exportado na última célula do notebook de EDA (ex.: `df.to_csv("data/clean/dataset.csv", index=False)`). O `app.py` lê **somente** desta pasta, via `src/data_loader.py`.
-
-### O que vai para o Git
-
-| Pasta | Versionada? | Por quê |
-| --- | --- | --- |
-| `data/raw/` | **Não** (só o `.gitkeep`) | O bruto pode ser grande ou ter dados sensíveis, e o app não o usa. |
-| `data/clean/` | **Sim** | O Streamlit Community Cloud faz deploy a partir do GitHub e só enxerga o que está no repositório. Sem o CSV tratado no repo, o app funciona na sua máquina e **quebra no deploy**. |
-
-### Antes de dar `git push` com o dado tratado
-
-- **O dado é público ou pode ser compartilhado?** Se não for claramente público, use um **repositório privado** (o Community Cloud permite conectar repositórios privados ao autorizar o GitHub; confirme na hora do deploy). Nesse caso, dê acesso de leitura ao professor (como colaborador ou pela organização).
-- **Dado sensível** (nomes, CPF, e-mail, telefone, localização exata etc.): remova ou anonimize na EDA, antes de exportar para `data/clean/`. Isso vale mesmo em repositório privado.
-- **Tamanho:** o GitHub rejeita arquivos acima de **100 MB**. Se o CSV tratado for grande, reduza colunas e linhas na EDA ou exporte em Parquet (`df.to_parquet(...)`, exige `pyarrow`).
-- **Lembre de commitar o arquivo:** confira com `git status` que `data/clean/dataset.csv` aparece como novo arquivo.
-
-## Passo a passo
-
-O passo a passo detalhado de cada aula (Aulas 21, 22 e 23), com pré-requisitos e objetivos, está em [ROTEIRO.md](ROTEIRO.md). Comece por ele depois do Setup.
-
-**Link do app (Aula 23):** _(preencher após o deploy)_
-
-## IA neste projeto
-
-Este projeto usa o **streamlit skills**: um conjunto de instruções (arquivos `SKILL.md`) que a ferramenta de IA lê para escrever código Streamlit seguindo boas práticas (estrutura de layout, cache, widgets, etc.).
-
-**Como instalar:** depois do `pip install -r requirements.txt`, rode na raiz do projeto:
-
-```bash
-streamlit skills        # interativo
-streamlit skills --yes  # sem confirmações
+```text
+app.py                         # app: sidebar, abas e os dois dashboards
+src/
+  data_loader.py               # leitura do CSV tratado com @st.cache_data (só as colunas usadas)
+  constantes.py                # variáveis, rótulos e cores
+  estatisticas.py              # IQR, correlação e tabela descritiva (Dashboard 1)
+  metricas.py                  # KPIs e formatação (Dashboard 2)
+  graficos.py                  # gráficos Altair
+data/clean/dataset.csv         # dataset tratado (20.000 x 73, 8,8 MB), versionado
+data/raw/                      # dataset bruto, não versionado
+notebooks/
+  eda.ipynb                    # minha EDA original da Aula 11, sem alterações
+  eda-com-downloads.ipynb      # EDA + exportação de data/raw e data/clean
+  metricas-dashboard2.ipynb    # teste das métricas e plots prévios do Dashboard 2
+  arquivo-eda-original.ipynb   # EDA de referência do professor (Heart Disease)
+entregas/                      # rascunhos dos dashboards e justificativa das métricas
+prompts/                       # template de prompt e declaração de uso de IA
+docs/                          # screenshots do README
+.streamlit/config.toml         # tema
 ```
 
-O comando cria *symlinks* para as skills que acompanham a sua instalação do Streamlit, então elas se atualizam sozinhas quando você atualiza o pacote. (A opção `--global` instala para todos os projetos, em vez de só este.)
+## Dados
 
-**Onde fica instalado:**
+O EV Battery Health Prediction é um dataset público e sintético do Kaggle. `vehicle_id` e
+`battery_serial` são códigos fictícios, sem dados pessoais. Por isso `data/clean/dataset.csv` está
+versionado: o Streamlit Community Cloud só enxerga o que está no repositório. O CSV tem 8,8 MB, bem abaixo
+do limite de 100 MB do GitHub, e o app lê só as 13 colunas que usa.
 
-- `.claude/skills/`: lido pelo Claude Code.
-- `.agents/skills/`: lido pelo Gemini CLI, que já encontra essa pasta sozinho.
+Passo a passo das aulas e checklist de deploy: [ROTEIRO.md](ROTEIRO.md).
 
-Essas pastas **não são versionadas** (ver `.gitignore`): os symlinks apontam para o seu ambiente virtual e não funcionam em outra máquina. Cada pessoa roda `streamlit skills` no próprio clone.
+## Uso de IA
 
-**Se você usa outra ferramenta** (ChatGPT, Copilot Chat, etc.): abra o `SKILL.md` correspondente em `.agents/skills/` e cole o conteúdo manualmente no início do chat, antes do seu pedido.
-
-O uso de IA deve ser declarado conforme a seção abaixo.
-
-## Pasta `prompts/`
-
-A pasta [prompts/](prompts) guarda só o que é sobre **uso de IA**: o template de prompt para transformar o rascunho de layout em esqueleto de código e a **Declaração de Uso de IA** exigida pelo Plano de Ensino. Veja [prompts/README.md](prompts/README.md).
-
-## Pasta `entregas/`
-
-A pasta [entregas/](entregas) guarda os artefatos de entrega que não são sobre IA: os rascunhos de layout de cada dashboard (`.jpg` ou `.png`) e a justificativa das métricas do Dashboard 2. Veja [entregas/README.md](entregas/README.md) para o detalhe de cada arquivo e o checklist por aula. Não coloque esses arquivos no `.gitignore`.
+Uso declarado em [prompts/declaracao-uso-ia.md](prompts/declaracao-uso-ia.md), conforme o Plano de Ensino.
