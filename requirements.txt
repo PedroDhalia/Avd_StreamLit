@@ -1,9 +1,12 @@
-streamlit>=1.50,<2.0
+# App (o que o Streamlit Community Cloud instala no deploy)
+streamlit>=1.66,<2.0
+altair>=5.4,<7.0
 pandas>=2.2,<3.0
 numpy>=2.0,<3.0
+
+# Notebooks de EDA e de métricas (reprodução local)
 matplotlib>=3.9,<4.0
 seaborn>=0.13,<1.0
 scipy>=1.14,<2.0
-plotly>=6.0,<7.0
 ipykernel>=6.29,<8.0
-ucimlrepo>=0.0.7,<1.0
+kagglehub[pandas-datasets]>=0.3,<2.0
