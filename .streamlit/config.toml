@@ -1,20 +1,30 @@
-# Configuração do Streamlit. Descomente e ajuste conforme o projeto avançar.
-# O tema pode ser trocado pelo menu ⋮ → Settings → Choose app theme.
+# Identidade visual do app.
+# Paleta derivada da EDA (Aula 11): roxo = classe de interesse (Falha), rosa = referência (Normal).
+# Os tons foram ajustados para contraste >= 3:1 no fundo branco e separação para daltonismo.
+# Tema claro fixo: as cores dos gráficos foram validadas contra o fundo branco.
 
 [theme]
-paddingTop = "0.0rem"     # espaço abaixo da barra do topo (valor entre aspas)
-# font = "sans serif"     # "sans serif", "serif" ou "monospace"
+base = "light"
+primaryColor = "#5e3e93"              # roxo da EDA: botões, sliders, abas ativas (texto branco com contraste 8:1)
+backgroundColor = "#ffffff"           # fundo da página
+secondaryBackgroundColor = "#f6f3f9"  # fundo dos widgets (lavanda bem clara)
+textColor = "#1f1a2b"                 # texto principal, quase preto com um toque de roxo
+borderColor = "#e4ddec"
+linkColor = "#5e3e93"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+baseRadius = "0.6rem"
+showWidgetBorder = true
+showSidebarBorder = true
+paddingTop = "1.5rem"
+metricValueFontWeight = 600
 
-[theme.light]
-primaryColor = "#c1121f"            # cor de destaque (widgets, links): mesmo vermelho dos histogramas
-backgroundColor = "#ffffff"         # fundo da página
-secondaryBackgroundColor = "#f0f2f6"  # fundo da sidebar e de widgets
-textColor = "#31333f"               # cor do texto
-borderColor = "#d5dae5"
+# Normal (rosa) e Falha (roxo) primeiro, na mesma ordem usada em todos os gráficos
+chartCategoricalColors = ["#d4789a", "#5e3e93", "#2a78d6", "#857f93"]
 
-[theme.dark]
-primaryColor = "#c1121f"
-backgroundColor = "#0e1117"
-secondaryBackgroundColor = "#262730"
-textColor = "#fafafa"
-borderColor = "#41444e"
+[theme.sidebar]
+backgroundColor = "#f6f3f9"
+secondaryBackgroundColor = "#ffffff"
+
+# Sem telemetria de uso do Streamlit
+[browser]
+gatherUsageStats = false
