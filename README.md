@@ -5,7 +5,7 @@ App em Streamlit com dois dashboards construídos a partir da minha EDA do datas
 (Kaggle, 20.000 veículos elétricos, 70 atributos), feita na Aula 11 da disciplina Análise e Visualização
 de Dados (CESAR School, 2026.2). Atividade das Aulas 21, 22 e 23.
 
-**Link do app:** _(preencher após o deploy no Streamlit Community Cloud)_
+**Link do app:** https://avd-baterias-ev.streamlit.app/
 
 | Dashboard 1: correlação e distribuição | Dashboard 2: indicadores |
 |---|---|
@@ -85,6 +85,14 @@ python -m pytest --headed   # para ver o navegador executando os testes
 
 Sem o download do Chromium, dá para usar o Edge ou o Chrome instalados:
 `python -m pytest --browser-channel msedge`.
+
+Os mesmos testes rodam contra o app publicado. A variável `APP_URL` aponta para o endereço interno
+`/~/+/`, que é o app sem a moldura do Streamlit Cloud:
+
+```bash
+APP_URL="https://avd-baterias-ev.streamlit.app/~/+/" python -m pytest      # macOS / Linux
+$env:APP_URL="https://avd-baterias-ev.streamlit.app/~/+/"; python -m pytest  # Windows (PowerShell)
+```
 
 Para regenerar os dados, rode `notebooks/eda-com-downloads.ipynb` do início ao fim: ele baixa o dataset do
 Kaggle com o `kagglehub` (versão 1, fixada para a análise ser reprodutível) e salva `data/raw/dataset.csv`

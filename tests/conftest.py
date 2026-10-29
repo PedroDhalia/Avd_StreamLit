@@ -1,5 +1,6 @@
 """Fixtures dos testes de interface: sobe o app numa porta livre e abre o navegador do Playwright."""
 
+import os
 import socket
 import subprocess
 import sys
@@ -22,7 +23,14 @@ def _porta_livre():
 
 @pytest.fixture(scope="session")
 def url_app(tmp_path_factory):
-    """Roda `streamlit run app.py` durante a sessão de testes e devolve a URL."""
+    """Roda `streamlit run app.py` durante a sessão de testes e devolve a URL.
+
+    Com a variável de ambiente APP_URL, testa um app já publicado (o deploy) em vez de subir um local.
+    """
+    if os.environ.get("APP_URL"):
+        yield os.environ["APP_URL"]
+        return
+
     porta = _porta_livre()
     log = tmp_path_factory.mktemp("servidor") / "streamlit.log"
     with open(log, "w", encoding="utf-8") as saida:
