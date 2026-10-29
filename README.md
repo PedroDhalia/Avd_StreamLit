@@ -68,6 +68,24 @@ streamlit skills --yes   # opcional: skills de IA do Streamlit
 streamlit run app.py
 ```
 
+### Testes de interface
+
+21 testes com Playwright + pytest abrem o app num navegador de verdade e cobrem as duas abas: avisos com
+0, 1 e 2+ variáveis, troca de método, remoção de outliers, sliders, cliques e Shift + clique nas barras,
+área arrastada na dispersão, botão Limpar seleções, filtro de tipo de uso, tabelas, layout de celular e
+funcionamento sem acesso ao Google Fonts. Cada teste também falha se aparecer exceção do Python na tela ou
+erro no console do navegador.
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m playwright install chromium
+python -m pytest            # sobe o app sozinho numa porta livre (cerca de 2 min)
+python -m pytest --headed   # para ver o navegador executando os testes
+```
+
+Sem o download do Chromium, dá para usar o Edge ou o Chrome instalados:
+`python -m pytest --browser-channel msedge`.
+
 Para regenerar os dados, rode `notebooks/eda-com-downloads.ipynb` do início ao fim: ele baixa o dataset do
 Kaggle com o `kagglehub` (versão 1, fixada para a análise ser reprodutível) e salva `data/raw/dataset.csv`
 (bruto, fora do Git) e `data/clean/dataset.csv` (tratado, lido pelo app).
@@ -89,6 +107,7 @@ notebooks/
   eda-com-downloads.ipynb      # EDA + exportação de data/raw e data/clean
   metricas-dashboard2.ipynb    # teste das métricas e plots prévios do Dashboard 2
   arquivo-eda-original.ipynb   # EDA de referência do professor (Heart Disease)
+tests/                         # testes de interface (Playwright + pytest)
 entregas/                      # rascunhos dos dashboards e justificativa das métricas
 prompts/                       # template de prompt e declaração de uso de IA
 docs/                          # screenshots do README
