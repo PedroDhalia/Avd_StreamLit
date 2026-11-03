@@ -12,26 +12,6 @@ Claude Code (modelo Claude Opus 5.5), usado como agente dentro do VS Code, com a
 (`developing-with-streamlit`, que lê a documentação da versão instalada, 1.66) e de visualização de
 dados (`dataviz`, com validador de paleta para contraste e daltonismo).
 
-## Prompts usados
-
-```text
-Quero que faça baseado nesse meu EDA essa nova atividade: @"Aula_11_Prática_EDA (1).ipynb" para isso,
-analise essas aulas: @"Aula 21 - Streamlit parte 1.pptx" @"Aula 22 - Streamlit parte 2.pptx"
-@"Aula 23 - Streamlit parte 3.pptx" para saber como realizar o fluxo da atividade.
-```
-
-```text
-Desculpa, acabei me confundindo e enviei EDA errado, preciso que reestrutrure TUDO de acordo com esse:
-@"Meu_dataset_Prática_EDA (1).ipynb"
-```
-
-O primeiro prompt apontava para o notebook de demonstração da aula (Heart Disease). Com o segundo, o
-projeto foi refeito do zero sobre a minha EDA (EV Battery Health). Nada do Heart Disease ficou no
-repositório além do notebook de referência do professor (`notebooks/arquivo-eda-original.ipynb`).
-
-Os prompts estruturados (Contexto, Entrada, Restrições, Formato) que descrevem cada dashboard estão em
-[`layout-skeleton-prompt.md`](layout-skeleton-prompt.md).
-
 ## O que a IA produziu
 
 - Leitura dos slides das Aulas 21–23, do notebook de EDA e do repositório-modelo, e montagem do projeto

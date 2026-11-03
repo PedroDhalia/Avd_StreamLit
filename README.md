@@ -130,7 +130,3 @@ versionado: o Streamlit Community Cloud só enxerga o que está no repositório.
 do limite de 100 MB do GitHub, e o app lê só as 13 colunas que usa.
 
 Passo a passo das aulas e checklist de deploy: [ROTEIRO.md](ROTEIRO.md).
-
-## Uso de IA
-
-Uso declarado em [prompts/declaracao-uso-ia.md](prompts/declaracao-uso-ia.md), conforme o Plano de Ensino.
